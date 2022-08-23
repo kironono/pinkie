@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/kironono/pinkie/config"
 	"github.com/kironono/pinkie/server"
 )
 
@@ -19,6 +20,11 @@ func main() {
 }
 
 func serve(ctx context.Context) error {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		return fmt.Errorf("failed load config: %w", err)
+	}
+
 	port := 8080
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
@@ -27,10 +33,12 @@ func serve(ctx context.Context) error {
 	url := fmt.Sprintf("http://%s", l.Addr().String())
 	log.Printf("start with: %s", url)
 
-	mux, err := server.NewMux(ctx)
+	mux, cleanup, err := server.NewMux(ctx, cfg)
 	if err != nil {
 		return fmt.Errorf("failed: %w", err)
 	}
+	defer cleanup()
+
 	s := server.NewServer(l, mux)
 	return s.Run(ctx)
 }
