@@ -6,11 +6,13 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/kironono/pinkie/config"
+	"github.com/kironono/pinkie/handler"
+	"github.com/kironono/pinkie/service"
 	"github.com/kironono/pinkie/store"
 )
 
 func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), error) {
-	_, cleanup, err := store.NewDB(ctx, cfg)
+	db, cleanup, err := store.NewDB(ctx, cfg)
 	if err != nil {
 		return nil, cleanup, err
 	}
@@ -21,6 +23,15 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Write([]byte(`{"status": "ok"}`))
 	})
+
+	jobService := &service.JobService{
+		DB:   db,
+		Repo: &store.JobRepository{},
+	}
+	listJobs := handler.ListJobs{
+		Service: jobService,
+	}
+	mux.Get("/jobs", listJobs.ServeHTTP)
 
 	return mux, cleanup, nil
 }
