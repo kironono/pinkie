@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi"
 	"github.com/kironono/pinkie/entity"
 	"github.com/kironono/pinkie/registry"
 	"github.com/kironono/pinkie/usecase"
@@ -27,7 +28,8 @@ func NewJob(repo registry.Repository) JobHandler {
 func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+
 	job, err := j.uc.Show(entity.JobID(id))
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
