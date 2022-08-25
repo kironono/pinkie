@@ -24,10 +24,13 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		w.Write([]byte(`{"status": "ok"}`))
 	})
 
-	// jobs
 	repo := registry.NewRepository(db)
-	jobHandler := handler.NewJob(repo)
-	mux.Get("/jobs/{id:\\d+}", jobHandler.Show)
+	// jobs
+	mux.Route("/jobs", func(r chi.Router) {
+		h := handler.NewJob(repo)
+
+		r.Get("/{id:\\d+}", h.Show)
+	})
 
 	return mux, cleanup, nil
 }
