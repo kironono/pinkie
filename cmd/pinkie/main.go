@@ -25,7 +25,7 @@ func serve(ctx context.Context) error {
 		return fmt.Errorf("failed load config: %w", err)
 	}
 
-	port := 8080
+	port := cfg.HTTPPort
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return fmt.Errorf("failed to listen port %d: %w", port, err)

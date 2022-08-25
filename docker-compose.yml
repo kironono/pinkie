@@ -1,0 +1,36 @@
+# vim:fenc=utf-8 ff=unix ft=yaml :
+
+version: "2"
+services:
+  app:
+    build:
+      context: "_docker/app"
+      dockerfile: "Dockerfile"
+    volumes:
+      - ".:/app"
+    ports:
+      - "18080:80"
+    links:
+      - db
+    tty: true
+    stdin_open: true
+    environment:
+      PINKIE_HTTP_PORT: 80
+      PINKIE_DB_HOST: db
+  db:
+    build:
+      context: "_docker/db"
+      dockerfile: "Dockerfile"
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "pinkie"
+      MYSQL_USER: "pinkie"
+      MYSQL_PASSWORD: "pinkie"
+    volumes:
+      - "db-data:/var/lib/mysql"
+    ports:
+      - "33306:3306"
+
+volumes:
+  db-data:
+    driver: "local"
