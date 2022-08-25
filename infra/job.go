@@ -3,10 +3,9 @@ package infra
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/kironono/pinkie/entity"
+	"github.com/kironono/pinkie/model"
 	"github.com/kironono/pinkie/repository"
 )
 
@@ -20,13 +19,13 @@ func NewJobRepository(db *sqlx.DB) repository.Job {
 	}
 }
 
-func (j *JobRepository) First(ctx context.Context, id entity.JobID) (*entity.Job, error) {
-	job := &entity.Job{}
+func (j *JobRepository) First(ctx context.Context, id model.JobID) (*model.Job, error) {
+	job := &model.Job{}
 	q := `SELECT * FROM jobs WHERE id = ? LIMIT 1`
 
 	if err := j.DB.GetContext(ctx, job, q, id); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("not found")
+			return nil, model.ErrRecordNotFound
 		} else {
 			return nil, err
 		}
@@ -34,8 +33,8 @@ func (j *JobRepository) First(ctx context.Context, id entity.JobID) (*entity.Job
 	return job, nil
 }
 
-func (j *JobRepository) Find(ctx context.Context) (entity.Jobs, error) {
-	jobs := entity.Jobs{}
+func (j *JobRepository) Find(ctx context.Context) (model.Jobs, error) {
+	jobs := model.Jobs{}
 	q := `SELECT * FROM jobs`
 
 	if err := j.DB.SelectContext(ctx, &jobs, q); err != nil {
@@ -44,7 +43,7 @@ func (j *JobRepository) Find(ctx context.Context) (entity.Jobs, error) {
 	return jobs, nil
 }
 
-func (j *JobRepository) Create(ctx context.Context, job *entity.Job) (*entity.Job, error) {
+func (j *JobRepository) Create(ctx context.Context, job *model.Job) (*model.Job, error) {
 	// TODO:
 	return job, nil
 }

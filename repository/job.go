@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 
-	"github.com/kironono/pinkie/entity"
+	"github.com/kironono/pinkie/model"
 )
 
 type Job interface {
-	First(context.Context, entity.JobID) (*entity.Job, error)
-	Find(context.Context) (entity.Jobs, error)
-	Create(context.Context, *entity.Job) (*entity.Job, error)
+	First(context.Context, model.JobID) (*model.Job, error)
+	Find(context.Context) (model.Jobs, error)
+	Create(context.Context, *model.Job) (*model.Job, error)
 }

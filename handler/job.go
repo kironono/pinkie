@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/kironono/pinkie/entity"
+	"github.com/kironono/pinkie/model"
 	"github.com/kironono/pinkie/registry"
 	"github.com/kironono/pinkie/usecase"
 )
@@ -31,11 +32,18 @@ func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	job, err := j.uc.Show(ctx, entity.JobID(id))
+	job, err := j.uc.Show(ctx, model.JobID(id))
 	if err != nil {
-		RespondJSON(ctx, w, &ErrResponse{
-			Message: err.Error(),
-		}, http.StatusInternalServerError)
+		switch {
+		case errors.Is(err, model.ErrRecordNotFound):
+			RespondJSON(ctx, w, &ErrResponse{
+				Message: err.Error(),
+			}, http.StatusNotFound)
+		default:
+			RespondJSON(ctx, w, &ErrResponse{
+				Message: err.Error(),
+			}, http.StatusNotFound)
+		}
 		return
 	}
 	RespondJSON(ctx, w, job, http.StatusOK)
