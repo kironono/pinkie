@@ -27,7 +27,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	// jobs
 	repo := registry.NewRepository(db)
 	jobHandler := handler.NewJob(repo)
-	mux.Get("/jobs/show", jobHandler.Show)
+	mux.Get("/jobs/{id:\\d+}", jobHandler.Show)
 
 	return mux, cleanup, nil
 }
