@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kironono/pinkie/model"
 	"github.com/kironono/pinkie/repository"
@@ -24,6 +25,9 @@ func NewJob(repo repository.Job) Job {
 
 func (j *job) Show(ctx context.Context, id model.JobID) (*model.Job, error) {
 	job, err := j.repo.First(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed got job %d: %w", id, err)
+	}
 	return job, err
 }
 

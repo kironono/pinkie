@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -37,9 +38,10 @@ func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, model.ErrRecordNotFound):
 			RespondJSON(ctx, w, &ErrResponse{
-				Message: err.Error(),
+				Message: "Not Found",
 			}, http.StatusNotFound)
 		default:
+			log.Printf("%s\n", err)
 			RespondJSON(ctx, w, &ErrResponse{
 				Message: err.Error(),
 			}, http.StatusNotFound)
