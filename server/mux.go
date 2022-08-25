@@ -29,6 +29,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	mux.Route("/jobs", func(r chi.Router) {
 		h := handler.NewJob(repo)
 
+		r.Get("/", h.List)
 		r.Get("/{id:\\d+}", h.Show)
 	})
 

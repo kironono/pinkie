@@ -12,6 +12,7 @@ import (
 
 type JobHandler interface {
 	Show(http.ResponseWriter, *http.Request)
+	List(http.ResponseWriter, *http.Request)
 }
 
 type job struct {
@@ -30,7 +31,7 @@ func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	job, err := j.uc.Show(entity.JobID(id))
+	job, err := j.uc.Show(ctx, entity.JobID(id))
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
@@ -38,4 +39,17 @@ func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	RespondJSON(ctx, w, job, http.StatusOK)
+}
+
+func (j *job) List(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	jobs, err := j.uc.List(ctx)
+	if err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusInternalServerError)
+		return
+	}
+	RespondJSON(ctx, w, jobs, http.StatusOK)
 }
