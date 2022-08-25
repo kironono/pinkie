@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/kironono/pinkie/config"
 	"github.com/kironono/pinkie/handler"
-	"github.com/kironono/pinkie/service"
+	"github.com/kironono/pinkie/registry"
 	"github.com/kironono/pinkie/store"
 )
 
@@ -24,14 +24,10 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		w.Write([]byte(`{"status": "ok"}`))
 	})
 
-	jobService := &service.JobService{
-		DB:   db,
-		Repo: &store.JobRepository{},
-	}
-	listJobs := handler.ListJobs{
-		Service: jobService,
-	}
-	mux.Get("/jobs", listJobs.ServeHTTP)
+	// jobs
+	repo := registry.NewRepository(db)
+	jobHandler := handler.NewJob(repo)
+	mux.Get("/jobs/show", jobHandler.Show)
 
 	return mux, cleanup, nil
 }
