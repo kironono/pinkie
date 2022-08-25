@@ -17,6 +17,10 @@ services:
     environment:
       PINKIE_HTTP_PORT: 80
       PINKIE_DB_HOST: db
+      PINKIE_DB_PORT: 3306
+      PINKIE_DB_USER: pinkie
+      PINKIE_DB_PASSWORD: pinkie
+      PINKIE_DB_NAME: pinkie
   db:
     build:
       context: "_docker/db"
