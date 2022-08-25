@@ -1,5 +1,5 @@
 development:
   dialect: mysql
-  dir: db/migrations
+  dir: _tools/db/migrations
   datasource: ${PINKIE_DB_USER}:${PINKIE_DB_PASSWORD}@tcp(${PINKIE_DB_HOST})/${PINKIE_DB_NAME}?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=true&loc=UTC
   table: migrations
