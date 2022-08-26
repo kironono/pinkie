@@ -14,10 +14,6 @@ import (
 	"github.com/kironono/pinkie/usecase"
 )
 
-const (
-	DEFAULT_PER_PAGE_NUM = 10
-)
-
 type JobHandler interface {
 	List(http.ResponseWriter, *http.Request)
 	Show(http.ResponseWriter, *http.Request)
