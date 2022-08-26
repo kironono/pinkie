@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
+	"github.com/go-playground/validator"
 	"github.com/kironono/pinkie/model"
 	"github.com/kironono/pinkie/registry"
 	"github.com/kironono/pinkie/usecase"
@@ -26,13 +27,16 @@ type JobHandler interface {
 }
 
 type job struct {
-	uc usecase.Job
+	uc       usecase.Job
+	validate *validator.Validate
 }
 
 func NewJob(repo registry.Repository) JobHandler {
 	uc := usecase.NewJob(repo.NewJob())
+	validate := validator.New()
 	return &job{
-		uc: uc,
+		uc:       uc,
+		validate: validate,
 	}
 }
 
@@ -86,8 +90,8 @@ func (j *job) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var b struct {
-		Name string `json:"name"`
-		Slug string `json:"slug"`
+		Name string `json:"name" validate:"required"`
+		Slug string `json:"slug" validate:"required"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
@@ -96,6 +100,14 @@ func (j *job) Create(w http.ResponseWriter, r *http.Request) {
 		}, http.StatusBadRequest)
 		return
 	}
+
+	if err := j.validate.Struct(b); err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusBadRequest)
+		return
+	}
+
 	job, err := j.uc.Create(ctx, b.Name, b.Slug)
 	if err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
@@ -112,11 +124,18 @@ func (j *job) Update(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	var b struct {
-		Name string `json:"name"`
-		Slug string `json:"slug"`
+		Name string `json:"name" validate:"required"`
+		Slug string `json:"slug" validate:"required"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		RespondJSON(ctx, w, &ErrResponse{
+			Message: err.Error(),
+		}, http.StatusBadRequest)
+		return
+	}
+
+	if err := j.validate.Struct(b); err != nil {
 		RespondJSON(ctx, w, &ErrResponse{
 			Message: err.Error(),
 		}, http.StatusBadRequest)
