@@ -49,7 +49,7 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	})
 
 	// metric
-	mux.Route("/metric/{jobSlug}", func(r chi.Router) {
+	mux.Route("/v1/metric/{jobSlug}", func(r chi.Router) {
 		h := handler.NewMetric(repo)
 		r.Post("/", h.Create)
 	})
