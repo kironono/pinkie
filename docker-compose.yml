@@ -4,8 +4,8 @@ version: "2"
 services:
   app:
     build:
-      context: "_docker/app"
-      dockerfile: "Dockerfile"
+      context: "."
+      dockerfile: "_docker/app/Dockerfile"
     volumes:
       - ".:/app"
     ports:
