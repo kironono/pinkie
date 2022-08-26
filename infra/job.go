@@ -48,7 +48,7 @@ func (j *JobRepository) Fetch(ctx context.Context, page model.PageNum, per model
 }
 
 func (j *JobRepository) Store(ctx context.Context, job *model.Job) error {
-	q := `INSERT jobs SET name=?, slug=?, created_at=?, updated_at=?`
+	q := `INSERT INTO jobs SET name=?, slug=?, created_at=?, updated_at=?`
 	stmt, err := j.DB.PrepareContext(ctx, q)
 	if err != nil {
 		return err

@@ -39,10 +39,19 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		h := handler.NewJob(repo)
 
 		r.Get("/", h.List)
-		r.Get("/{id:\\d+}", h.Show)
 		r.Post("/", h.Create)
-		r.Put("/{id:\\d+}", h.Update)
-		r.Delete("/{id:\\d+}", h.Delete)
+
+		r.Route("/{id:\\d+}", func(r chi.Router) {
+			r.Get("/", h.Show)
+			r.Put("/", h.Update)
+			r.Delete("/", h.Delete)
+		})
+	})
+
+	// metric
+	mux.Route("/metric/{jobSlug}", func(r chi.Router) {
+		h := handler.NewMetric(repo)
+		r.Post("/", h.Create)
 	})
 
 	return mux, cleanup, nil

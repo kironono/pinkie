@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type JobID int64
 
@@ -23,13 +26,12 @@ const (
 )
 
 type JobSession struct {
-	ID         JobSessionID     `json:"id" db:"id"`
-	JobID      JobID            `json:"job_id" db:"job_id"`
-	LastStatus JobSessionStatus `json:"last_status" db:"last_status"`
-	StartAt    time.Time        `json:"start_at" db:"start_at"`
-	EndAt      time.Time        `json:"end_at" db:"end_at"`
-	CreatedAt  time.Time        `json:"created_at" db:"created_at"`
-	UpdatedAt  time.Time        `json:"updated_at" db:"updated_at"`
+	ID        JobSessionID `json:"id" db:"id"`
+	JobID     JobID        `json:"job_id" db:"job_id"`
+	StartAt   time.Time    `json:"start_at" db:"start_at"`
+	EndAt     sql.NullTime `json:"end_at" db:"end_at"`
+	CreatedAt time.Time    `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at" db:"updated_at"`
 }
 
 type JobSessionEventID int64

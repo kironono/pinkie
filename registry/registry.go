@@ -9,12 +9,14 @@ import (
 type Repository interface {
 	NewJob() repository.Job
 	NewUser() repository.User
+	NewMetric() repository.Metric
 }
 
 type repositoryImpl struct {
-	DB       *sqlx.DB
-	jobRepo  repository.Job
-	userRepo repository.User
+	DB         *sqlx.DB
+	jobRepo    repository.Job
+	userRepo   repository.User
+	metricRepo repository.Metric
 }
 
 func NewRepository(db *sqlx.DB) Repository {
@@ -35,4 +37,11 @@ func (r *repositoryImpl) NewUser() repository.User {
 		r.userRepo = infra.NewUserRepository(r.DB)
 	}
 	return r.userRepo
+}
+
+func (r *repositoryImpl) NewMetric() repository.Metric {
+	if r.metricRepo == nil {
+		r.metricRepo = infra.NewMetricRepository(r.DB)
+	}
+	return r.metricRepo
 }
