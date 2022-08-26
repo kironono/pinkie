@@ -18,13 +18,14 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 	}
 
 	mux := chi.NewRouter()
-
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.Write([]byte(`{"status": "ok"}`))
-	})
-
 	repo := registry.NewRepository(db)
+
+	// health
+	mux.Route("/health", func(r chi.Router) {
+		h := handler.NewHealth()
+
+		r.Get("/", h.Show)
+	})
 
 	// users
 	mux.Route("/users", func(r chi.Router) {
