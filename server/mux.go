@@ -31,6 +31,9 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 
 		r.Get("/", h.List)
 		r.Get("/{id:\\d+}", h.Show)
+		r.Post("/", h.Create)
+		r.Put("/{id:\\d+}", h.Update)
+		r.Delete("/{id:\\d+}", h.Delete)
 	})
 
 	return mux, cleanup, nil
