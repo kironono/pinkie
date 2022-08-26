@@ -34,6 +34,20 @@ func (j *JobRepository) GetByID(ctx context.Context, id model.JobID) (*model.Job
 	return job, nil
 }
 
+func (j *JobRepository) GetBySlug(ctx context.Context, jobSlug string) (*model.Job, error) {
+	job := &model.Job{}
+	q := `SELECT * FROM jobs WHERE slug = ? LIMIT 1`
+
+	if err := j.DB.GetContext(ctx, job, q, jobSlug); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, model.ErrRecordNotFound
+		} else {
+			return nil, err
+		}
+	}
+	return job, nil
+}
+
 func (j *JobRepository) Fetch(ctx context.Context, page model.PageNum, per model.PerPageNum, order model.Order) (model.Jobs, error) {
 	jobs := model.Jobs{}
 	q := fmt.Sprintf(`SELECT * FROM jobs ORDER BY %s LIMIT ? OFFSET ?`, order)

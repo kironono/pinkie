@@ -25,7 +25,7 @@ type metric struct {
 
 func NewMetric(repo registry.Repository) MetricHandler {
 	return &metric{
-		uc:       usecase.NewMetric(repo.NewAtomic(), repo.NewMetric()),
+		uc:       usecase.NewMetric(repo.NewAtomic(), repo.NewJob(), repo.NewJobSession()),
 		validate: validator.New(),
 	}
 }

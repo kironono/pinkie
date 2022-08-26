@@ -12,16 +12,16 @@ import (
 type Repository interface {
 	NewAtomic() store.Atomic
 	NewJob() repository.Job
+	NewJobSession() repository.JobSession
 	NewUser() repository.User
-	NewMetric() repository.Metric
 }
 
 type repositoryImpl struct {
-	DB         *sqlx.DB
-	Atomic     store.Atomic
-	jobRepo    repository.Job
-	userRepo   repository.User
-	metricRepo repository.Metric
+	DB             *sqlx.DB
+	Atomic         store.Atomic
+	jobRepo        repository.Job
+	jobSessionRepo repository.JobSession
+	userRepo       repository.User
 }
 
 func NewRepository(db *sqlx.DB) Repository {
@@ -47,16 +47,16 @@ func (r *repositoryImpl) NewJob() repository.Job {
 	return r.jobRepo
 }
 
+func (r *repositoryImpl) NewJobSession() repository.JobSession {
+	if r.jobSessionRepo == nil {
+		r.jobSessionRepo = infra.NewJobSessionRepository(r.DB)
+	}
+	return r.jobSessionRepo
+}
+
 func (r *repositoryImpl) NewUser() repository.User {
 	if r.userRepo == nil {
 		r.userRepo = infra.NewUserRepository(r.DB)
 	}
 	return r.userRepo
-}
-
-func (r *repositoryImpl) NewMetric() repository.Metric {
-	if r.metricRepo == nil {
-		r.metricRepo = infra.NewMetricRepository(r.DB)
-	}
-	return r.metricRepo
 }
