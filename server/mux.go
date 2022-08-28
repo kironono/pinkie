@@ -42,11 +42,19 @@ func NewMux(ctx context.Context, cfg *config.Config) (http.Handler, func(), erro
 		r.Get("/", h.List)
 		r.Post("/", h.Create)
 
-		r.Route("/{id:\\d+}", func(r chi.Router) {
+		r.Route("/{jobID:\\d+}", func(r chi.Router) {
 			r.Get("/", h.Show)
 			r.Put("/", h.Update)
 			r.Delete("/", h.Delete)
+
+			// job_sessions
+			r.Route("/sessions", func(r chi.Router) {
+				h := handler.NewJobSession(repo)
+
+				r.Get("/", h.List)
+			})
 		})
+
 	})
 
 	// metric

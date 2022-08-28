@@ -39,9 +39,9 @@ func NewJob(repo registry.Repository) JobHandler {
 func (j *job) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	jobID, _ := strconv.Atoi(chi.URLParam(r, "jobID"))
 
-	job, err := j.uc.Show(ctx, model.JobID(id))
+	job, err := j.uc.Show(ctx, model.JobID(jobID))
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrRecordNotFound):
@@ -117,7 +117,7 @@ func (j *job) Create(w http.ResponseWriter, r *http.Request) {
 func (j *job) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	jobID, _ := strconv.Atoi(chi.URLParam(r, "jobID"))
 
 	var b struct {
 		Name string `json:"name" validate:"required"`
@@ -138,7 +138,7 @@ func (j *job) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	job, err := j.uc.Update(ctx, model.JobID(id), b.Name, b.Slug)
+	job, err := j.uc.Update(ctx, model.JobID(jobID), b.Name, b.Slug)
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrRecordNotFound):
@@ -159,9 +159,9 @@ func (j *job) Update(w http.ResponseWriter, r *http.Request) {
 func (j *job) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	id, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	jobID, _ := strconv.Atoi(chi.URLParam(r, "jobID"))
 
-	if err := j.uc.Delete(ctx, model.JobID(id)); err != nil {
+	if err := j.uc.Delete(ctx, model.JobID(jobID)); err != nil {
 		switch {
 		case errors.Is(err, model.ErrRecordNotFound):
 			RespondJSON(ctx, w, &ErrResponse{

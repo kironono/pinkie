@@ -21,6 +21,19 @@ func NewJobSessionRepository(db *sqlx.DB) repository.JobSession {
 	}
 }
 
+func (j *JobSessionRepository) Fetch(ctx context.Context, jobID model.JobID, page model.PageNum, per model.PerPageNum, order model.Order) (model.JobSessions, error) {
+	jobSessions := model.JobSessions{}
+	q := fmt.Sprintf(`SELECT * FROM job_sessions WHERE job_id = ? ORDER BY %s LIMIT ? OFFSET ?`, order)
+
+	offset := (int(page) - 1) * int(per)
+	limit := int(per)
+
+	if err := j.DB.SelectContext(ctx, &jobSessions, q, jobID, limit, offset); err != nil {
+		return nil, err
+	}
+	return jobSessions, nil
+}
+
 func (j *JobSessionRepository) GetOpenedJobSessionByJobID(ctx context.Context, jobID model.JobID) (*model.JobSession, error) {
 	q := `SELECT * FROM job_sessions WHERE end_at IS NULL AND job_id = ? LIMIT 1`
 

@@ -34,6 +34,8 @@ type JobSession struct {
 	UpdatedAt time.Time    `json:"updated_at" db:"updated_at"`
 }
 
+type JobSessions []*JobSession
+
 type JobSessionEventID int64
 
 type JobSessionEvent struct {
