@@ -11,3 +11,8 @@ install-tools:
 		echo "install $${tool}"; \
 		go install $${tool}; \
 	done
+
+.PHONY: test
+test:
+	@go test -v --race --cover -coverprofile=coverage.txt -covermode=atomic ./...
+	@go tool cover -html=coverage.txt -o coverage.html
